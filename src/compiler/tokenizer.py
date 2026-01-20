@@ -99,7 +99,7 @@ def get_regex_for_token(regex: str) -> str:
         "int_literal": r"[0-9]+",
         "white_space": r"[\n|\t| ]+",
         "operator": r"\+|-|\*|\\|%|==|!=|=|<=|>=|<|>",
-        "punctuation": r"\(",
+        "punctuation": r"\(|\)|\{|\}|,|;",
     }
     return tokenizer_regexes[regex]
 
