@@ -27,12 +27,14 @@ def tokenizer(source_code: str = "") -> list[Token]:
     white_space = get_regex_for_token("white_space")
     operator = get_regex_for_token("operator")
     punctuation = get_regex_for_token("punctuation")
+    comment = get_regex_for_token("comment")
 
     identifier_re = re.compile(identifier)
     int_literal_re = re.compile(int_literal)
     white_space_re = re.compile(white_space)
     operator_re = re.compile(operator)
     punctuation_re = re.compile(punctuation)
+    comment_re = re.compile(comment)
 
     regular_expressions = [
         identifier_re,
@@ -40,6 +42,7 @@ def tokenizer(source_code: str = "") -> list[Token]:
         white_space_re,
         operator_re,
         punctuation_re,
+        comment_re
     ]
     previous_match_end = 0
     tokens: list[str] = []
@@ -50,7 +53,7 @@ def tokenizer(source_code: str = "") -> list[Token]:
             match = regex.search(source_code, previous_match_end)
             if match and match.start() == previous_match_end:
                 previous_match_end = match.end()
-                if regex == white_space_re:
+                if regex in [ white_space_re, comment_re ]:
                     token_line += match[0].count("\n")
                     require_white_space_after = False
                 elif require_white_space_after:
@@ -100,8 +103,10 @@ def get_regex_for_token(regex: str) -> str:
         "white_space": r"[\n|\t| ]+",
         "operator": r"\+|-|\*|\\|%|==|!=|=|<=|>=|<|>",
         "punctuation": r"\(|\)|\{|\}|,|;",
+        "comment": r"(//|#)[^\n]*",
     }
     return tokenizer_regexes[regex]
+
 
 
 if __name__ == "__main__":

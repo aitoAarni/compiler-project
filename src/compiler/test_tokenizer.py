@@ -44,3 +44,9 @@ def test_tokenizes_operators():
 def test_tokenizes_punctuation():
     correct_result = create_tokens("punctuation", "(", "{", "}", ")", ",", ";")
     assert tokenizer("({} ),;") == correct_result
+
+def test_tokenizer_ignores_comments():
+    correct_result = create_tokens("int_literal", 1, 23, 45)
+    assert tokenizer(
+        "1//just a comment ignore\n 23 #ignore this but not next line\n45"
+        ) == correct_result

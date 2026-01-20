@@ -1,8 +1,8 @@
 import re
 
-r = re.compile(r"\+")
+r = re.compile(r"(//|#)[^\n]*")
 
-match = r.search("+")
+match = r.search("bruv # jotain mitä vaan ahahha fsdij \n" )
 
 print()
 print(match)
