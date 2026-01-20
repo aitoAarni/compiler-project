@@ -1,8 +1,8 @@
 import re
 
-r = re.compile(r"bro[\n|\t| ]+?")
+r = re.compile(r"\+")
 
-match = r.match("ro   ")
+match = r.search("+")
 
 print()
 print(match)

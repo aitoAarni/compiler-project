@@ -17,7 +17,7 @@ def test_empty_input() -> None:
 def test_ignore_white_space() -> None:
     assert tokenizer("  \n\t") == []
 
-def test_tokenizes_positive_integers() -> None:
+def test_tokenizes_int_literals() -> None:
     correct_result = create_tokens(
         "int_literal",
         12, 34, 56, 78, 9
@@ -33,3 +33,9 @@ def test_throws_error_on_invalid_identifiers() -> None:
         tokenizer("2var")
     with pytest.raises(Exception, match="Invalid syntax. Could not tokenize \\.var"):
         tokenizer(".var")
+
+def test_tokenizes_operators():
+    correct_result = create_tokens(
+        "operator", "+"
+    )
+    assert tokenizer("+") == correct_result
