@@ -1,29 +1,49 @@
 import re
 
-def add_whitespace_match(regex: str) -> str:
-    white_space = r"[\n|\t| ]"
-    return white_space + regex + white_space
+
+def tokenizer(source_code: str="") -> list[str]:
+    identifier = get_regex_for_token("identifier")
+    positive_integer = get_regex_for_token("positive_integer")
+    white_space = get_regex_for_token("white_space")
+
+    identifier_re = re.compile(identifier)
+    positive_integer_re = re.compile(positive_integer)
+    white_space_re = re.compile(white_space)
+    regular_expressions = [identifier_re, positive_integer_re, white_space_re]
+    previous_match_end = 0
+    tokens: list[str] = []
+    require_white_space_after = False
+
+    while (previous_match_end < len(source_code)):
+        for regex in regular_expressions:
+            match = regex.search(source_code, previous_match_end)
+            print("match:", match)
+            if match and match.start() == previous_match_end:
+                print("match accepted")
+                previous_match_end = match.end()
+                if regex == white_space_re:
+                    print("in white space regex")
+                    require_white_space_after = False
+                elif require_white_space_after:
+                    raise Exception(f"Invalid syntax. Could not tokenize {source_code}")
+                elif regex == identifier_re:
+                    tokens.append(match[0])
+                elif regex == positive_integer_re:
+                    require_white_space_after = True
+                    tokens.append(match[0])
+                break
+        else:
+            raise Exception(f"Invalid syntax. Could not tokenize {source_code}")
+
+    return tokens
 
 def get_regex_for_token(regex: str) -> str:
     tokenizer_regexes = {
         "identifier": r"[a-zA-Z|_][a-zA-Z|_|0-9]*",
         "positive_integer" : r"[0-9]+",
+        "white_space" : r"[\n|\t| ]+"
     }
-    return add_whitespace_match(tokenizer_regexes[regex])
+    return tokenizer_regexes[regex]
     
-
-def tokenizer(source_code: str="") -> list[str]:
-    identifier = get_regex_for_token("identifier")
-    positive_integer = get_regex_for_token("positive_integer")
-    r = re.compile(rf"{identifier}|{positive_integer}")
-    source_code_spaced =  " " + source_code + " "
-    previous_match_end = 0
-    tokens: list[str] = []
-    while (match := r.search(source_code_spaced, previous_match_end)):
-        
-        previous_match_end = match.end() - 1
-        tokens.append(match[0].strip())
-    return tokens
-
 if __name__ == "__main__":
-    print(tokenizer("if \nwhile _var1 2not_ok .not_ok\nOk_2"))
+    print(tokenizer("if \nwhile _var1 not_ok not_ok\nOk_2"))
