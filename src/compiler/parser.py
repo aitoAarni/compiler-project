@@ -34,42 +34,55 @@ def parse(tokens: list[Token]) -> ast.Expression:
         return ast.Literal(int(token.text))
 
     def parse_identifier() -> ast.Identifier:
-        pass
+        if peek().type != "identifier":
+            raise Exception(f"{peek().location}: expected a identifier (variable)")
+        token = consume()
+        return ast.Literal(token.text)
 
-    def parse_term() -> ast.Expression:
-        if peek().type == "int_literal":
-            return parse_int_literal()
-        elif peek().type == "identifier":
-            return parse_identifier()
-        else:
-            raise Exception(
-                f"{peek().location}: expected an integer literal or an identifier"
-            )
-
-    def parse_expression() -> ast.BinaryOp:
+    def parse_expression() -> ast.Expression:
         left = parse_term()
         while peek().text in ['+', '-']:
-            # Move past the '+' or '-'.
             operator_token = consume()
             operator = operator_token.text
-
-            # Parse the operator on the right.
             right = parse_term()
-
-            # Combine it with the stuff we've
-            # accumulated on the left so far.
             left = ast.BinaryOp(
                 left,
                 operator,
                 right
             )
-        
         return left
 
-    return parse_expression()
+    def parse_term() -> ast.Expression:
+        left = parse_factor()
+        while peek().text in ['*', '/']:
+            operator_token = consume()
+            operator = operator_token.text
+            right = parse_factor()
+            left = ast.BinaryOp(
+                left,
+                operator,
+                right
+            )
+        return left
 
+    def parse_factor() -> ast.Expression:
+        if peek().text == '(':
+            return parse_parenthesized()
+        elif peek().type == 'int_literal':
+            return parse_int_literal()
+        elif peek().type == 'identifier':
+            return parse_identifier()
+        else:
+            raise Exception(f'{peek().location}: expected "(", an integer literal or an identifier')
+
+    def parse_parenthesized() -> ast.Expression:
+        consume('(')
+        expr = parse_expression()
+        consume(')')
+        return expr
+
+    return parse_expression()
 
 if __name__ == "__main__":
     tokens = tokenizer("2 + 2")
     parsed = parse(tokens)
-    print(parsed)
