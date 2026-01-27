@@ -4,7 +4,7 @@ from compiler.tokenizer import Token, SourceLocation
 from compiler.parser import parse
 import compiler.custom_ast as ast
 
-t = ["int_literal", "identifier", "punctuation"]
+t = ["int_literal", "identifier", "punctuation", "operator"]
 
 
 def create_tokens(*token_args: Sequence[str | int]) -> list[Token]:
@@ -16,21 +16,10 @@ def create_tokens(*token_args: Sequence[str | int]) -> list[Token]:
     return tokens
 
 
-def get_tokens() -> list[Token]:
-    tokens = [
-        Token("1", "int_literal", SourceLocation(0, 0)),
-        Token("+", "identifier", SourceLocation(0, 0)),
-        Token("1", "int_literal", SourceLocation(0, 0)),
-    ]
-    for token in tokens:
-        token.location._testing = True
-    return tokens
-
-
 def test_parse_plus_operation():
     one = ast.Literal(1)
     expression = ast.BinaryOp(one, ast.Operator("+"), one)
-    tokens = create_tokens([1, t[0]], ["+", t[1]], [1, t[0]])
+    tokens = create_tokens([1, t[0]], ["+", t[3]], [1, t[0]])
     print(tokens)
     parsed = parse(tokens)
     assert parsed == expression
@@ -39,14 +28,14 @@ def test_parse_plus_operation():
 def test_operators_work_with_variables():
     a = ast.Identifier("a")
     correct_expression = ast.BinaryOp(a, ast.Operator("+"), a)
-    tokens = create_tokens(["a", t[1]], ["+", t[1]], ["a", t[1]])
+    tokens = create_tokens(["a", t[1]], ["+", t[3]], ["a", t[1]])
     parsed = parse(tokens)
 
     assert parsed == correct_expression
 
 
 def test_wrong_syntax_throws_error():
-    tokens = create_tokens(["a", t[1]], ["+", t[1]], ["a", t[1]], ["a", t[1]])
+    tokens = create_tokens(["a", t[1]], ["+", t[3]], ["a", t[1]], ["a", t[1]])
     tokens[3].location.line = 1
     tokens[3].location.column = 4
     with pytest.raises(Exception, match=rf"Invalid syntax at \(1, 4\)"):
@@ -56,7 +45,7 @@ def test_wrong_syntax_throws_error():
 def test_parse_term():
     a = ast.Identifier("a")
     tokens = create_tokens(
-        ["a", t[1]], ["+", t[1]], ["a", t[1]], ["*", t[1]], [2, t[0]]
+        ["a", t[1]], ["+", t[3]], ["a", t[1]], ["*", t[3]], [2, t[0]]
     )
     correct_expresion = ast.BinaryOp(
         a, ast.Operator("+"), ast.BinaryOp(a, ast.Operator("*"), ast.Literal(2))
@@ -70,10 +59,10 @@ def test_parse_with_parenthesis():
     tokens = create_tokens(
         ["(", t[2]],
         ["a", t[1]],
-        ["+", t[1]],
+        ["+", t[3]],
         ["a", t[1]],
         [")", t[2]],
-        ["*", t[1]],
+        ["*", t[3]],
         [2, t[0]],
     )
     correct_expresion = ast.BinaryOp(
@@ -89,7 +78,7 @@ def test_empty_input_on_parser():
 
 
 def test_invalid_operation():
-    tokens = create_tokens([2, t[0]], ["+", t[1]])
+    tokens = create_tokens([2, t[0]], ["+", t[3]])
     with pytest.raises(
         Exception,
         match=r"SourceLocation\(line=0, column=0\):"
@@ -130,17 +119,37 @@ def test_ternary_operator_expressions():
 
     tokens = create_tokens(
         [2, t[0]],
-        ["*", t[1]],
+        ["*", t[3]],
         ["if", t[1]],
         ["2", t[0]],
-        ["-", t[1]],
+        ["-", t[3]],
         ["a", t[1]],
         ["then", t[1]],
         [3, t[0]],
-        ["+", t[1]],
+        ["+", t[3]],
         [4, t[0]],
         ["else", t[1]],
         ["b", t[1]],
+    )
+    parsed = parse(tokens)
+    assert parsed == correct_answer
+
+
+def test_nexted_if_statement():
+    ternary_expr = ast.TernaryOp(ast.Identifier("a"), ast.Literal(1), ast.Literal(2))
+    correct_answer = ast.TernaryOp(ast.Identifier("a"), ternary_expr, ast.Literal(1))
+    tokens = create_tokens(
+        ["if", t[1]],
+        ["a", t[1]],
+        ["then", t[1]],
+        ["if", t[1]],
+        ["a", t[1]],
+        ["then", t[1]],
+        [1, t[0]],
+        ["else", t[1]],
+        [2, t[0]],
+        ["else", t[1]],
+        [1, t[0]],
     )
     parsed = parse(tokens)
     assert parsed == correct_answer
