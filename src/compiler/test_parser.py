@@ -153,3 +153,10 @@ def test_nexted_if_statement():
     )
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+
+def test_function_call():
+    correct_answer = ast.FunctionCall(ast.Identifier("f"), [ast.Literal(1)])
+    tokens = create_tokens(["f", t[1]], ["(", t[2]], [1, t[0]], [")", t[2]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer

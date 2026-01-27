@@ -17,6 +17,15 @@ class Operator(Expression):
     symbol: str
 
 @dataclass
+class Punctuation(Expression):
+    name: str
+
+@dataclass
+class FunctionCall(Expression):
+    function_name: Identifier
+    args: list[Expression]
+
+@dataclass
 class BinaryOp(Expression):
     """AST node for a binary operation like `A + B`"""
     left: Expression
