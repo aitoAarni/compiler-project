@@ -82,3 +82,13 @@ def test_invalid_operation():
                        r" expected \"\(\", an integer literal or an identifier"
                        ):
         print(parse(tokens))
+
+def test_ternary_operator():
+    two = ast.Literal(2)
+    three = ast.Literal(3)
+    right_answer = ast.TernaryOp(two, three, None)
+    tokens = create_tokens(
+        ["if", t[1]], [2, t[0]], ["then", t[1]], [3, t[0]]
+    )
+    parsed = parse(tokens)
+    assert parsed == right_answer

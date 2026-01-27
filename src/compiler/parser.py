@@ -38,6 +38,8 @@ def parse(tokens: list[Token]) -> ast.Expression:
     def parse_identifier() -> ast.Identifier:
         if peek().type != "identifier":
             raise Exception(f"{peek().location}: expected a identifier (variable)")
+        if peek().text in ["if"]:
+            return parse_if()
         token = consume()
         return ast.Identifier(token.text)
 
@@ -77,11 +79,19 @@ def parse(tokens: list[Token]) -> ast.Expression:
         else:
             raise Exception(f'{peek().location}: expected "(", an integer literal or an identifier')
 
+    def parse_if() -> ast.TernaryOp:
+        consume("if")         
+        left = parse_expression()
+        consume("then")
+        middle = parse_expression()
+        return ast.TernaryOp(left, middle, None)
+
     def parse_parenthesized() -> ast.Expression:
         consume('(')
         expr = parse_expression()
         consume(')')
         return expr
+
     expression = parse_expression()
     if pos != len(tokens):
         loc = peek().location
@@ -89,7 +99,7 @@ def parse(tokens: list[Token]) -> ast.Expression:
     return expression
 
 if __name__ == "__main__":
-    tokens = tokenizer()
+    tokens = tokenizer("if 2 then 3")
     parsed = parse(tokens)
     print(parsed)
 

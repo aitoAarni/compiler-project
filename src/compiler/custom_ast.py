@@ -18,3 +18,9 @@ class BinaryOp(Expression):
     left: Expression
     op: str
     right: Expression
+
+@dataclass
+class TernaryOp(Expression):
+    left: Expression
+    middle: Expression
+    right: Expression | None
