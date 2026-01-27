@@ -160,3 +160,26 @@ def test_function_call():
     tokens = create_tokens(["f", t[1]], ["(", t[2]], [1, t[0]], [")", t[2]])
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+
+def test_function_call_multiple_args():
+
+    correct_answer = ast.FunctionCall(
+        ast.Identifier("f"),
+        [
+            ast.BinaryOp(ast.Literal(1), ast.Operator("/"), ast.Identifier("b")),
+            ast.Literal(2),
+        ],
+    )
+    tokens = create_tokens(
+        ["f", t[1]],
+        ["(", t[2]],
+        [1, t[0]],
+        ["/", t[3]],
+        ["b", t[1]],
+        [",", t[2]],
+        [2, t[0]],
+        [")", t[2]],
+    )
+    parsed = parse(tokens)
+    assert parsed == correct_answer
