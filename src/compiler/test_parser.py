@@ -6,7 +6,6 @@ import compiler.custom_ast as ast
 
 t = ["int_literal", "identifier", "punctuation"]
 
-
 def create_tokens(*token_args: Sequence[str | int]) -> list[Token]:
     tokens = []
     for args in token_args:
@@ -71,3 +70,7 @@ def test_parse_with_parenthesis():
     correct_expresion = ast.BinaryOp(ast.BinaryOp(a, "+", a), "*", ast.Literal(2))
     parsed = parse(tokens)
     assert parsed == correct_expresion
+
+def test_empty_input_on_parser():
+    parsed = parse([])
+    assert parsed == None

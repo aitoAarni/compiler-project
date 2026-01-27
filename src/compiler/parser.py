@@ -4,8 +4,10 @@ import compiler.custom_ast as ast
 
 
 def parse(tokens: list[Token]) -> ast.Expression:
+    if not bool(tokens):
+        return None
+
     pos = 0
-    
     def peek() -> Token:
         if pos < len(tokens):
             return tokens[pos]
@@ -87,6 +89,7 @@ def parse(tokens: list[Token]) -> ast.Expression:
     return expression
 
 if __name__ == "__main__":
-    tokens = tokenizer("a + a * 2")
+    tokens = tokenizer()
     parsed = parse(tokens)
     print(parsed)
+
