@@ -6,7 +6,7 @@ import compiler.custom_ast as ast
 
 t = ["int_literal", "identifier"]
 
-def create_tokens(*token_args: Sequence[str | int]):
+def create_tokens(*token_args: Sequence[str | int]) -> list[Token]:
     tokens = [] 
     for args in token_args:
         token = Token(str(args[0]), args[1], SourceLocation(0, 0))
@@ -39,6 +39,11 @@ def test_operators_work_with_variables():
     parsed = parse(tokens)
     
     assert parsed == correct_expression
-# def test_wrong_syntax_throws_error():
-#     tokens = create_tokens(("a"))
-#     with pytest.raises(Exception, f"Invalid syntax at: 0, 0"):
+
+def test_wrong_syntax_throws_error():
+    tokens = create_tokens(["a", t[1]], ["+", t[1]], ["a", t[1]], ["a", t[1]])
+    tokens[3].location.line = 1
+    tokens[3].location.column = 4
+    with pytest.raises(Exception, match=rf"Invalid syntax at \(1, 4\)"):
+        parsed = parse(tokens)
+        print(parsed)

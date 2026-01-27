@@ -5,7 +5,7 @@ import compiler.custom_ast as ast
 
 def parse(tokens: list[Token]) -> ast.Expression:
     pos = 0
-
+    
     def peek() -> Token:
         if pos < len(tokens):
             return tokens[pos]
@@ -80,10 +80,13 @@ def parse(tokens: list[Token]) -> ast.Expression:
         expr = parse_expression()
         consume(')')
         return expr
-
-    return parse_expression()
+    expression = parse_expression()
+    if pos != len(tokens):
+        loc = peek().location
+        raise Exception(f"Invalid syntax at ({loc.line}, {loc.column})") 
+    return expression
 
 if __name__ == "__main__":
-    tokens = tokenizer("a + a")
+    tokens = tokenizer("a + a a")
     parsed = parse(tokens)
     print(parsed)
