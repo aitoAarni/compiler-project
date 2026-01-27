@@ -81,10 +81,15 @@ def parse(tokens: list[Token]) -> ast.Expression:
 
     def parse_if() -> ast.TernaryOp:
         consume("if")         
-        left = parse_expression()
+        if_ = parse_expression()
         consume("then")
-        middle = parse_expression()
-        return ast.TernaryOp(left, middle, None)
+        then_ = parse_expression()
+        else_ = None
+        if peek().text == "else":
+            consume("else")
+            else_ = parse_expression()
+
+        return ast.TernaryOp(if_, then_, else_)
 
     def parse_parenthesized() -> ast.Expression:
         consume('(')

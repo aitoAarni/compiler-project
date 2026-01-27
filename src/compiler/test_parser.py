@@ -92,3 +92,29 @@ def test_ternary_operator():
     )
     parsed = parse(tokens)
     assert parsed == right_answer
+
+def test_ternary_operator_with_else():
+    if_ = ast.Literal(1)
+    then_ = ast.Literal(2)
+    else_ = ast.Literal(3)
+
+    right_answer = ast.TernaryOp(if_, then_, else_)
+    tokens = create_tokens(
+        ["if", t[1]], [1, t[0]], ["then", t[1]], [2, t[0]],
+        ["else", t[1]], [3, t[0]]
+    )
+    parsed = parse(tokens)
+    assert parsed == right_answer
+# def test_ternary_operator_2():
+#     expr1 = ast.BinaryOp(ast.Literal(2), "-", ast.Identifier("a"))
+#     expr2 = ast.BinaryOp(ast.Literal(3), "+", ast.Literal(4))
+#     expr3 = ast.Identifier("b")
+#     correct_answer = ast.TernaryOp(expr1, expr2, expr3)
+
+#     tokens = create_tokens(
+#         ["if", t[1]], ["2", t[0]], ["+", t[1]], ["a", t[1]],
+#         ["then", t[1]], [3, t[0]], ["+", t[1]], [4, t[0]],
+#         ["else", t[1]], ["b", t[1]]
+#     )
+#     parsed = parse(tokens)
+#     assert parsed == correct_answer

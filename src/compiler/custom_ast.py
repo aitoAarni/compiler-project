@@ -21,6 +21,6 @@ class BinaryOp(Expression):
 
 @dataclass
 class TernaryOp(Expression):
-    left: Expression
-    middle: Expression
-    right: Expression | None
+    if_: Expression
+    then_: Expression
+    else_: Expression | None
