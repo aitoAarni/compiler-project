@@ -196,5 +196,15 @@ def test_invalid_function_syntax():
         parse(tokens)
 
     tokens2 = create_tokens(["f", t[1]], ["(", t[2]], [1, t[0]])
-    with pytest.raises(Exception, match="SourceLocation\\(line=0, column=0\\): expected \"\\)\""):
+    with pytest.raises(
+        Exception, match='SourceLocation\\(line=0, column=0\\): expected "\\)"'
+    ):
         parse(tokens2)
+
+
+def test_remainder_operator():
+    correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("%"), ast.Identifier("a"))
+
+    tokens = create_tokens(["1", t[0]], ["%", t[3]], ["a", t[1]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer

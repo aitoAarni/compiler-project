@@ -39,7 +39,7 @@ class Parser:
     def parse_identifier(self) -> ast.Identifier:
         if self.peek().type != "identifier":
             raise Exception(f"{self.peek().location}: expected a identifier (variable)")
-        if self.peek().text in ["if"]:
+        if self.peek().text == "if":
             return self.parse_if()
         token = self.consume()
         identifier = ast.Identifier(token.text)
@@ -48,7 +48,6 @@ class Parser:
         return identifier
 
     def parse_function_call(self, identifier: ast.Identifier) -> ast.FunctionCall:
-
         self.consume("(")
         args: list[ast.Expression] = []
         while True:
@@ -73,15 +72,15 @@ class Parser:
         return left
 
     def parse_level_7(self) -> ast.Expression:
-        left = self.parse_factor()
-        while self.peek().text in ["*", "/"]:
+        left = self.parse_level_8()
+        while self.peek().text in ["*", "/", "%"]:
             operator_token = self.consume()
             operator = ast.Operator(operator_token.text)
-            right = self.parse_factor()
+            right = self.parse_level_8()
             left = ast.BinaryOp(left, operator, right)
         return left
 
-    def parse_factor(self) -> ast.Expression:
+    def parse_level_8(self) -> ast.Expression:
         if self.peek().text == "(":
             return self.parse_parenthesized()
         elif self.peek().type == "int_literal":
@@ -111,7 +110,6 @@ class Parser:
         return expr
 
     def parse(self):
-
         if not bool(self.tokens):
             return None
         expression = self.parse_expression()
