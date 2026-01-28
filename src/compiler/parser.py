@@ -2,6 +2,7 @@ from compiler.tokenizer import Token
 from compiler.tokenizer import tokenizer
 import compiler.custom_ast as ast
 
+
 class Parser:
     def __init__(self, tokens: list[Token]) -> None:
         self.tokens = tokens
@@ -43,29 +44,35 @@ class Parser:
         token = self.consume()
         identifier = ast.Identifier(token.text)
         if self.peek().text == "(":
-            self.consume("(")
-            args: list[ast.Expression] = []
-            while True:
-                arg = self.parse_expression()
-                args.append(arg)
-                if self.peek().text != ",":
-                    break
-                self.consume(",")
-            self.consume(")")
-            return ast.FunctionCall(identifier, args)
-
+            return self.parse_function_call(identifier)
         return identifier
 
+    def parse_function_call(self, identifier: ast.Identifier) -> ast.FunctionCall:
+
+        self.consume("(")
+        args: list[ast.Expression] = []
+        while True:
+            arg = self.parse_expression()
+            args.append(arg)
+            if self.peek().text != ",":
+                break
+            self.consume(",")
+        self.consume(")")
+        return ast.FunctionCall(identifier, args)
+
     def parse_expression(self) -> ast.Expression:
-        left = self.parse_term()
+        return self.parse_level_6()
+
+    def parse_level_6(self):
+        left = self.parse_level_7()
         while self.peek().text in ["+", "-"]:
             operator_token = self.consume()
             operator = ast.Operator(operator_token.text)
-            right = self.parse_term()
+            right = self.parse_level_7()
             left = ast.BinaryOp(left, operator, right)
         return left
 
-    def parse_term(self) -> ast.Expression:
+    def parse_level_7(self) -> ast.Expression:
         left = self.parse_factor()
         while self.peek().text in ["*", "/"]:
             operator_token = self.consume()
@@ -95,7 +102,6 @@ class Parser:
         if self.peek().text == "else":
             self.consume("else")
             else_ = self.parse_expression()
-
         return ast.TernaryOp(if_, then_, else_)
 
     def parse_parenthesized(self) -> ast.Expression:
@@ -118,6 +124,7 @@ class Parser:
 def parse(tokens: list[Token]) -> ast.Expression:
     parser = Parser(tokens)
     return parser.parse()
+
 
 if __name__ == "__main__":
     tokens = tokenizer("1 + 1")
