@@ -203,8 +203,23 @@ def test_invalid_function_syntax():
 
 
 def test_remainder_operator():
-    correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("%"), ast.Identifier("a"))
+    correct_answer = ast.BinaryOp(
+        ast.Literal(1), ast.Operator("%"), ast.Identifier("a")
+    )
 
     tokens = create_tokens(["1", t[0]], ["%", t[3]], ["a", t[1]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer
+
+
+def test_equal_operator():
+    correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("=="), ast.Literal(1))
+    tokens = create_tokens(["1", t[0]], ["==", t[3]], [1, t[0]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer
+
+def test_not_equal_operator():
+    correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("!="), ast.Literal(1))
+    tokens = create_tokens(["1", t[0]], ["!=", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer

@@ -62,31 +62,32 @@ class Parser:
     def parse_expression(self) -> ast.Expression:
         return self.parse_level_1()
 
-    def parse_level_1(self):
+    def parse_level_1(self) -> Exception:
         left = self.parse_level_2()
         return left
 
-    def parse_level_2(self):
+    def parse_level_2(self) -> Exception:
         left = self.parse_level_3()
         return left
 
-    def parse_level_3(self):
+    def parse_level_3(self) -> Exception:
         left = self.parse_level_4()
         return left
 
-    def parse_level_4(self):
+    def parse_level_4(self) -> Exception:
         left = self.parse_level_5()
         while self.peek().text in ["==", "!="]:
             operator_token = self.consume(["==", "!="])
-            operator = ast.Operator("==", "!=")
-
+            operator = ast.Operator(operator_token.text)
+            right = self.parse_level_5()
+            left = ast.BinaryOp(left, operator, right)
         return left
 
-    def parse_level_5(self):
+    def parse_level_5(self) -> Exception:
         left = self.parse_level_6()
         return left
 
-    def parse_level_6(self):
+    def parse_level_6(self) -> Exception:
         left = self.parse_level_7()
         while self.peek().text in ["+", "-"]:
             operator_token = self.consume()
