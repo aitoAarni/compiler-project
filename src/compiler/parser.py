@@ -79,12 +79,10 @@ class Parser:
         return left
 
     def parse_level_2(self) -> ast.Expression:
-        left = self.parse_level_3()
-        return left
+        return self.parse_operator(["or"], self.parse_level_3)
 
     def parse_level_3(self) -> ast.Expression:
-        left = self.parse_level_4()
-        return left
+        return self.parse_operator(["and"], self.parse_level_4)
 
     def parse_level_4(self) -> ast.Expression:
         return self.parse_operator(["!=", "=="], self.parse_level_5)

@@ -247,3 +247,15 @@ def test_greater_than_or_equal_operator():
     tokens = create_tokens(["1", t[0]], [">=", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+def test_and_operator():
+    correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("and"), ast.Literal(1))
+    tokens = create_tokens(["1", t[0]], ["and", t[3]], [1, t[0]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer
+
+def test_or_operator():
+    correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("or"), ast.Literal(1))
+    tokens = create_tokens(["1", t[0]], ["or", t[3]], [1, t[0]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer
