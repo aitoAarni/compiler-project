@@ -268,10 +268,19 @@ def test_or_operator():
     assert parsed == correct_answer
 
 
+
 def test_not_operator():
     correct_answer = ast.UnaryOp(
         ast.Operator("not"), ast.UnaryOp(ast.Operator("not"), ast.Literal(1))
     )
     tokens = create_tokens(["not", t[3]], ["not", t[3]], [1, t[0]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer
+
+def test_unary_minus_operator():
+    correct_answer = ast.UnaryOp(
+        ast.Operator("-"), ast.UnaryOp(ast.Operator("-"), ast.Literal(1))
+    )
+    tokens = create_tokens(["-", t[3]], ["-", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
