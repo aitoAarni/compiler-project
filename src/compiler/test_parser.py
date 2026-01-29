@@ -223,3 +223,9 @@ def test_not_equal_operator():
     tokens = create_tokens(["1", t[0]], ["!=", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+# def test_less_than_operator():
+#     correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("<"), ast.Literal(1))
+#     tokens = create_tokens(["1", t[0]], ["<", t[3]], [1, t[0]])
+#     parsed = parse(tokens)
+#     assert parsed == correct_answer

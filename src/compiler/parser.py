@@ -1,6 +1,7 @@
 from compiler.tokenizer import Token
 from compiler.tokenizer import tokenizer
 import compiler.custom_ast as ast
+from collections.abc import Callable
 
 
 class Parser:
@@ -62,48 +63,41 @@ class Parser:
     def parse_expression(self) -> ast.Expression:
         return self.parse_level_1()
 
-    def parse_level_1(self) -> Exception:
+    def parse_operator(
+        self, operators: list[str], next_func: Callable[[], ast.Expression]
+    ) -> ast.Expression:
+        left = next_func()
+        if self.peek().text in operators:
+            operator_token = self.consume(operators)
+            operator = ast.Operator(operator_token.text)
+            right = next_func()
+            left = ast.BinaryOp(left, operator, right)
+        return left
+
+    def parse_level_1(self) -> ast.Expression:
         left = self.parse_level_2()
         return left
 
-    def parse_level_2(self) -> Exception:
+    def parse_level_2(self) -> ast.Expression:
         left = self.parse_level_3()
         return left
 
-    def parse_level_3(self) -> Exception:
+    def parse_level_3(self) -> ast.Expression:
         left = self.parse_level_4()
         return left
 
-    def parse_level_4(self) -> Exception:
-        left = self.parse_level_5()
-        while self.peek().text in ["==", "!="]:
-            operator_token = self.consume(["==", "!="])
-            operator = ast.Operator(operator_token.text)
-            right = self.parse_level_5()
-            left = ast.BinaryOp(left, operator, right)
-        return left
+    def parse_level_4(self) -> ast.Expression:
+       return self.parse_operator(["!=", "=="], self.parse_level_5)
 
-    def parse_level_5(self) -> Exception:
+    def parse_level_5(self) -> ast.Expression:
         left = self.parse_level_6()
         return left
 
-    def parse_level_6(self) -> Exception:
-        left = self.parse_level_7()
-        while self.peek().text in ["+", "-"]:
-            operator_token = self.consume()
-            operator = ast.Operator(operator_token.text)
-            right = self.parse_level_7()
-            left = ast.BinaryOp(left, operator, right)
-        return left
+    def parse_level_6(self) -> ast.Expression:
+        return self.parse_operator(["+", "-"], self.parse_level_7)
 
     def parse_level_7(self) -> ast.Expression:
-        left = self.parse_level_8()
-        while self.peek().text in ["*", "/", "%"]:
-            operator_token = self.consume()
-            operator = ast.Operator(operator_token.text)
-            right = self.parse_level_8()
-            left = ast.BinaryOp(left, operator, right)
-        return left
+        return self.parse_operator(["*", "/", "%"], self.parse_level_8)
 
     def parse_level_8(self) -> ast.Expression:
         if self.peek().text == "(":
