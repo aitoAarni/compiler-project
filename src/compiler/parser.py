@@ -68,22 +68,11 @@ class Parser:
         self, operators: list[str], next_func: Callable[[], ast.Expression]
     ) -> ast.Expression:
         left = next_func()
-        print()
-        print(f"in {operators}, parser function")
-        print()
-        if self.peek().text in operators:
-            if "+" in operators:
-                print("in + parser loop")
+        while self.peek().text in operators:
             operator_token = self.consume(operators)
             operator = ast.Operator(operator_token.text)
             right = next_func()
-            print(
-                f"parsed {operator.symbol}, next: {self.peek().text} in {operators}: {self.peek().text in operators}"
-            )
             left = ast.BinaryOp(left, operator, right)
-            print(f"after left {left}")
-        print(f"leaving {operators} operation parser")
-        print()
         return left
 
     def parse_level_1(self) -> ast.Expression:
@@ -103,11 +92,9 @@ class Parser:
         return self.parse_binary_operator(["<", "<=", ">", ">="], self.parse_level_6)
 
     def parse_level_6(self) -> ast.Expression:
-        print("in parse lvl 6")
         return self.parse_binary_operator(["+", "-"], self.parse_level_7)
 
     def parse_level_7(self) -> ast.Expression:
-        print("in parse lvl 7")
         return self.parse_binary_operator(["*", "/", "%"], self.parse_level_8)
 
     def parse_level_8(self) -> ast.Expression:
@@ -152,7 +139,6 @@ class Parser:
         expression = self.parse_expression()
         if self.pos != self.token_length:
             loc = self.peek().location
-            print(expression)
             raise Exception(f"Invalid syntax at ({loc.line}, {loc.column})")
         return expression
 
@@ -165,3 +151,4 @@ def parse(tokens: list[Token]) -> ast.Expression:
 if __name__ == "__main__":
     tokens = tokenizer("1 + 1 * 2 + 3")
     parsed = parse(tokens)
+    print(parsed)
