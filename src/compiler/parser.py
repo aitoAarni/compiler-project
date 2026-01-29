@@ -63,7 +63,7 @@ class Parser:
     def parse_expression(self) -> ast.Expression:
         return self.parse_level_1()
 
-    def parse_operator(
+    def parse_binary_operator(
         self, operators: list[str], next_func: Callable[[], ast.Expression]
     ) -> ast.Expression:
         left = next_func()
@@ -79,24 +79,28 @@ class Parser:
         return left
 
     def parse_level_2(self) -> ast.Expression:
-        return self.parse_operator(["or"], self.parse_level_3)
+        return self.parse_binary_operator(["or"], self.parse_level_3)
 
     def parse_level_3(self) -> ast.Expression:
-        return self.parse_operator(["and"], self.parse_level_4)
+        return self.parse_binary_operator(["and"], self.parse_level_4)
 
     def parse_level_4(self) -> ast.Expression:
-        return self.parse_operator(["!=", "=="], self.parse_level_5)
+        return self.parse_binary_operator(["!=", "=="], self.parse_level_5)
 
     def parse_level_5(self) -> ast.Expression:
-        return self.parse_operator(["<", "<=", ">", ">="], self.parse_level_6)
+        return self.parse_binary_operator(["<", "<=", ">", ">="], self.parse_level_6)
 
     def parse_level_6(self) -> ast.Expression:
-        return self.parse_operator(["+", "-"], self.parse_level_7)
+        return self.parse_binary_operator(["+", "-"], self.parse_level_7)
 
     def parse_level_7(self) -> ast.Expression:
-        return self.parse_operator(["*", "/", "%"], self.parse_level_8)
+        return self.parse_binary_operator(["*", "/", "%"], self.parse_level_8)
 
     def parse_level_8(self) -> ast.Expression:
+
+        return self.parse_level_9()
+
+    def parse_level_9(self) -> ast.Expression:
         if self.peek().text == "(":
             return self.parse_parenthesized()
         elif self.peek().type == "int_literal":

@@ -26,10 +26,15 @@ class FunctionCall(Expression):
     args: list[Expression]
 
 @dataclass
+class UnaryOp(Expression):
+    expression: Expression
+    op: Operator 
+
+@dataclass
 class BinaryOp(Expression):
     """AST node for a binary operation like `A + B`"""
     left: Expression
-    op: str
+    op: Expression
     right: Expression
 
 @dataclass
