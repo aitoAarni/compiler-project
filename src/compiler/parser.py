@@ -98,11 +98,13 @@ class Parser:
         return self.parse_binary_operator(["*", "/", "%"], self.parse_level_8)
 
     def parse_level_8(self) -> ast.Expression:
-        # if self.peek().text in ["not"]:
-        #     operator_token = self.consume(["not"])
-        #     operator = ast.Operator(operator_token)
-        # right = parse_level
-        return self.parse_level_9()
+        if self.peek().text in ["not"]:
+            operator_token = self.consume(["not"])
+            operator = ast.Operator(operator_token.text)
+            right = self.parse_level_8()
+            return ast.UnaryOp(operator, right)
+        else:
+            return self.parse_level_9()
 
     def parse_level_9(self) -> ast.Expression:
         if self.peek().text == "(":

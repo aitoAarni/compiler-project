@@ -218,11 +218,13 @@ def test_equal_operator():
     parsed = parse(tokens)
     assert parsed == correct_answer
 
+
 def test_not_equal_operator():
     correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("!="), ast.Literal(1))
     tokens = create_tokens(["1", t[0]], ["!=", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
+
 
 def test_less_than_operator():
     correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("<"), ast.Literal(1))
@@ -230,11 +232,13 @@ def test_less_than_operator():
     parsed = parse(tokens)
     assert parsed == correct_answer
 
+
 def test_less_than_or_equal_operator():
     correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("<="), ast.Literal(1))
     tokens = create_tokens(["1", t[0]], ["<=", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
+
 
 def test_greater_than_operator():
     correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator(">"), ast.Literal(1))
@@ -242,11 +246,13 @@ def test_greater_than_operator():
     parsed = parse(tokens)
     assert parsed == correct_answer
 
+
 def test_greater_than_or_equal_operator():
     correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator(">="), ast.Literal(1))
     tokens = create_tokens(["1", t[0]], [">=", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
+
 
 def test_and_operator():
     correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("and"), ast.Literal(1))
@@ -254,14 +260,18 @@ def test_and_operator():
     parsed = parse(tokens)
     assert parsed == correct_answer
 
+
 def test_or_operator():
     correct_answer = ast.BinaryOp(ast.Literal(1), ast.Operator("or"), ast.Literal(1))
     tokens = create_tokens(["1", t[0]], ["or", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
 
-# def test_or_operator():
-#     correct_answer = ast.BinaryOp(ast.Operator("not"), ast.Literal(1))
-#     tokens = create_tokens(["not", t[3]], [1, t[0]])
-#     parsed = parse(tokens)
-#     assert parsed == correct_answer
+
+def test_not_operator():
+    correct_answer = ast.UnaryOp(
+        ast.Operator("not"), ast.UnaryOp(ast.Operator("not"), ast.Literal(1))
+    )
+    tokens = create_tokens(["not", t[3]], ["not", t[3]], [1, t[0]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer
