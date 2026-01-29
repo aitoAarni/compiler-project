@@ -259,3 +259,9 @@ def test_or_operator():
     tokens = create_tokens(["1", t[0]], ["or", t[3]], [1, t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+# def test_or_operator():
+#     correct_answer = ast.BinaryOp(ast.Operator("not"), ast.Literal(1))
+#     tokens = create_tokens(["not", t[3]], [1, t[0]])
+#     parsed = parse(tokens)
+#     assert parsed == correct_answer

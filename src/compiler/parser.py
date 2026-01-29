@@ -61,17 +61,29 @@ class Parser:
         return ast.FunctionCall(identifier, args)
 
     def parse_expression(self) -> ast.Expression:
+
         return self.parse_level_1()
 
     def parse_binary_operator(
         self, operators: list[str], next_func: Callable[[], ast.Expression]
     ) -> ast.Expression:
         left = next_func()
+        print()
+        print(f"in {operators}, parser function")
+        print()
         if self.peek().text in operators:
+            if "+" in operators:
+                print("in + parser loop")
             operator_token = self.consume(operators)
             operator = ast.Operator(operator_token.text)
             right = next_func()
+            print(
+                f"parsed {operator.symbol}, next: {self.peek().text} in {operators}: {self.peek().text in operators}"
+            )
             left = ast.BinaryOp(left, operator, right)
+            print(f"after left {left}")
+        print(f"leaving {operators} operation parser")
+        print()
         return left
 
     def parse_level_1(self) -> ast.Expression:
@@ -91,13 +103,18 @@ class Parser:
         return self.parse_binary_operator(["<", "<=", ">", ">="], self.parse_level_6)
 
     def parse_level_6(self) -> ast.Expression:
+        print("in parse lvl 6")
         return self.parse_binary_operator(["+", "-"], self.parse_level_7)
 
     def parse_level_7(self) -> ast.Expression:
+        print("in parse lvl 7")
         return self.parse_binary_operator(["*", "/", "%"], self.parse_level_8)
 
     def parse_level_8(self) -> ast.Expression:
-
+        # if self.peek().text in ["not"]:
+        #     operator_token = self.consume(["not"])
+        #     operator = ast.Operator(operator_token)
+        # right = parse_level
         return self.parse_level_9()
 
     def parse_level_9(self) -> ast.Expression:
@@ -133,9 +150,9 @@ class Parser:
         if not bool(self.tokens):
             return None
         expression = self.parse_expression()
-        print(expression)
         if self.pos != self.token_length:
             loc = self.peek().location
+            print(expression)
             raise Exception(f"Invalid syntax at ({loc.line}, {loc.column})")
         return expression
 
@@ -146,6 +163,5 @@ def parse(tokens: list[Token]) -> ast.Expression:
 
 
 if __name__ == "__main__":
-    tokens = tokenizer("1 + 1")
+    tokens = tokenizer("1 + 1 * 2 + 3")
     parsed = parse(tokens)
-    print(parsed)

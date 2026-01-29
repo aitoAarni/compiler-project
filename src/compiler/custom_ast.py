@@ -27,8 +27,8 @@ class FunctionCall(Expression):
 
 @dataclass
 class UnaryOp(Expression):
-    expression: Expression
     op: Operator 
+    right: Expression
 
 @dataclass
 class BinaryOp(Expression):
