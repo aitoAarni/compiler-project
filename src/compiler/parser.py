@@ -76,6 +76,10 @@ class Parser:
 
     def parse_level_4(self):
         left = self.parse_level_5()
+        while self.peek().text in ["==", "!="]:
+            operator_token = self.consume(["==", "!="])
+            operator = ast.Operator("==", "!=")
+
         return left
 
     def parse_level_5(self):
