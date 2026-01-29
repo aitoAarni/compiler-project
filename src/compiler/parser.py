@@ -87,11 +87,10 @@ class Parser:
         return left
 
     def parse_level_4(self) -> ast.Expression:
-       return self.parse_operator(["!=", "=="], self.parse_level_5)
+        return self.parse_operator(["!=", "=="], self.parse_level_5)
 
     def parse_level_5(self) -> ast.Expression:
-        left = self.parse_level_6()
-        return left
+        return self.parse_operator(["<", "<=", ">", ">="], self.parse_level_6)
 
     def parse_level_6(self) -> ast.Expression:
         return self.parse_operator(["+", "-"], self.parse_level_7)
