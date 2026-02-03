@@ -42,23 +42,29 @@ def tokenizer(source_code: str = "") -> list[Token]:
         white_space_re,
         operator_re,
         punctuation_re,
-        comment_re
+        comment_re,
     ]
     previous_match_end = 0
     tokens: list[str] = []
-    require_white_space_after = False
+    reqiure_non_identifier_char_after = False
     token_line = 1
     while previous_match_end < len(source_code):
         for regex in regular_expressions:
             match = regex.search(source_code, previous_match_end)
             if match and match.start() == previous_match_end:
                 previous_match_end = match.end()
-                if regex in [ white_space_re, comment_re ]:
-                    token_line += match[0].count("\n")
-                    require_white_space_after = False
-                elif require_white_space_after:
+
+                if reqiure_non_identifier_char_after and regex in [
+                    identifier_re,
+                    int_literal_re,
+                ]:
+
                     print("match:", match[0])
                     raise Exception(f"Invalid syntax. Could not tokenize {source_code}")
+                else:
+                    reqiure_non_identifier_char_after = False
+                if regex in [white_space_re, comment_re]:
+                    token_line += match[0].count("\n")
 
                 elif regex == identifier_re:
                     token = Token(
@@ -81,9 +87,9 @@ def tokenizer(source_code: str = "") -> list[Token]:
                         SourceLocation(token_line, match.start() + 1),
                     )
                     tokens.append(token)
-                
+
                 elif regex == int_literal_re:
-                    require_white_space_after = True
+                    reqiure_non_identifier_char_after = True
                     token = Token(
                         match[0],
                         "int_literal",

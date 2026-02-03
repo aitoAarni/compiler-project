@@ -57,7 +57,7 @@ class Parser:
     def parse_function_call(self, identifier: ast.Identifier) -> ast.FunctionCall:
         self.consume("(")
         args: list[ast.Expression] = []
-        while self.peek().text != ")":
+        while True:
             arg = self.parse_expression()
             print(f"parsed arg: {arg}")
             args.append(arg)
