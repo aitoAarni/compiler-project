@@ -47,26 +47,22 @@ class Parser:
 
         token = self.consume()
         identifier = ast.Identifier(token.text)
-        print(f"identifier: {identifier}")
-        print(f"self.peek().text = {self.peek().text}")
         if self.peek().text == "(":
-            print(f"In function part")
             return self.parse_function_call(identifier)
         return identifier
 
     def parse_function_call(self, identifier: ast.Identifier) -> ast.FunctionCall:
         self.consume("(")
         args: list[ast.Expression] = []
-        while True:
-            arg = self.parse_expression()
-            print(f"parsed arg: {arg}")
-            args.append(arg)
-            print(f"self.peek().text: {self.peek().text}")
-            if self.peek().text != ",":
-                break
-            self.consume(",")
+        if self.peek().text != ")":
+            while True:
+                arg = self.parse_expression()
+                args.append(arg)
+                if self.peek().text != ",":
+                    break
+                self.consume(",")
         self.consume(")")
-        return ast.FunctionCall(identifier, args)
+        return ast.FunctionCall(identifier, args if args else None)
 
     def parse_expression(self) -> ast.Expression:
 
@@ -189,7 +185,6 @@ def check_is_identifier(expression: ast.Expression, Error_msg=None) -> None:
 
 
 if __name__ == "__main__":
-    tokens = tokenizer("f(1,2)")
-    print(tokens)
+    tokens = tokenizer("f()")
     parsed = parse(tokens)
     print(parsed)

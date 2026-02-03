@@ -29,7 +29,7 @@ class Punctuation(Expression):
 @dataclass
 class FunctionCall(Expression):
     function_name: Identifier
-    args: list[Expression]
+    args: list[Expression] | None
 
 
 @dataclass

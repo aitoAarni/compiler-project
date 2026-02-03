@@ -59,7 +59,6 @@ def tokenizer(source_code: str = "") -> list[Token]:
                     int_literal_re,
                 ]:
 
-                    print("match:", match[0])
                     raise Exception(f"Invalid syntax. Could not tokenize {source_code}")
                 else:
                     reqiure_non_identifier_char_after = False
