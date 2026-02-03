@@ -316,3 +316,12 @@ def test_assignment_operator():
     )
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+
+def test_assignment_only_to_identifier():
+    tokens = create_tokens([3, t[0]], ["=", t[3]], [3, t[0]])
+    with pytest.raises(
+        Exception,
+        match="Left operand of assignment operator '=' needs to be an Identifier",
+    ):
+        parse(tokens)

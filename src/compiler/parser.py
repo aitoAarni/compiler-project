@@ -69,9 +69,12 @@ class Parser:
         operators: list[str],
         next_func: Callable[[], ast.Expression],
         left_associative: bool = True,
+        left_operand_check: None | Callable[..., None] = None,
     ) -> ast.Expression:
         left_operand = next_func()
         while self.peek().text in operators:
+            if left_operand_check:
+                left_operand_check(left_operand)
             operator_token = self.consume(operators)
             operator = ast.Operator(operator_token.text)
             if left_associative:
@@ -82,7 +85,15 @@ class Parser:
         return left_operand
 
     def parse_level_1(self) -> ast.Expression:
-        return self.parse_binary_operator([ "=" ], self.parse_level_2, left_associative=False) 
+        return self.parse_binary_operator(
+            ["="],
+            self.parse_level_2,
+            left_associative=False,
+            left_operand_check=lambda left: check_is_identifier(
+                left,
+                "Left operand of assignment operator '=' needs to be an Identifier",
+            ),
+        )
 
     def parse_level_2(self) -> ast.Expression:
         return self.parse_binary_operator(["or"], self.parse_level_3)
@@ -153,6 +164,13 @@ class Parser:
 def parse(tokens: list[Token]) -> ast.Expression:
     parser = Parser(tokens)
     return parser.parse()
+
+
+def check_is_identifier(expression: ast.Expression, Error_msg=None) -> None:
+    if Error_msg == None:
+        Error_msg = "Expected an Identifier"
+    if type(expression) != ast.Identifier:
+        raise Exception(Error_msg)
 
 
 if __name__ == "__main__":
