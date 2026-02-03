@@ -57,6 +57,7 @@ def tokenizer(source_code: str = "") -> list[Token]:
                     token_line += match[0].count("\n")
                     require_white_space_after = False
                 elif require_white_space_after:
+                    print("match:", match[0])
                     raise Exception(f"Invalid syntax. Could not tokenize {source_code}")
 
                 elif regex == identifier_re:

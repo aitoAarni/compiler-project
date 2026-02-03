@@ -40,20 +40,28 @@ class Parser:
     def parse_identifier(self) -> ast.Identifier:
         if self.peek().type != "identifier":
             raise Exception(f"{self.peek().location}: expected a identifier (variable)")
-        if self.peek().text == "if":
-            return self.parse_if()
+        elif self.peek().text == "if":
+            return self.parse_if_statement()
+        elif self.peek().text == "while":
+            return self.parse_while_statement()
+
         token = self.consume()
         identifier = ast.Identifier(token.text)
+        print(f"identifier: {identifier}")
+        print(f"self.peek().text = {self.peek().text}")
         if self.peek().text == "(":
+            print(f"In function part")
             return self.parse_function_call(identifier)
         return identifier
 
     def parse_function_call(self, identifier: ast.Identifier) -> ast.FunctionCall:
         self.consume("(")
         args: list[ast.Expression] = []
-        while True:
+        while self.peek().text != ")":
             arg = self.parse_expression()
+            print(f"parsed arg: {arg}")
             args.append(arg)
+            print(f"self.peek().text: {self.peek().text}")
             if self.peek().text != ",":
                 break
             self.consume(",")
@@ -134,7 +142,7 @@ class Parser:
                 f'{self.peek().location}: expected "(", an integer literal or an identifier'
             )
 
-    def parse_if(self) -> ast.TernaryOp:
+    def parse_if_statement(self) -> ast.TernaryOp:
         self.consume("if")
         if_ = self.parse_expression()
         self.consume("then")
@@ -144,6 +152,13 @@ class Parser:
             self.consume("else")
             else_ = self.parse_expression()
         return ast.TernaryOp(if_, then_, else_)
+
+    def parse_while_statement(self) -> ast.WhileStatement:
+        self.consume("while")
+        cond = self.parse_expression()
+        self.consume("do")
+        body = self.parse_expression()
+        return ast.WhileStatement(cond, body)
 
     def parse_parenthesized(self) -> ast.Expression:
         self.consume("(")
@@ -174,6 +189,7 @@ def check_is_identifier(expression: ast.Expression, Error_msg=None) -> None:
 
 
 if __name__ == "__main__":
-    tokens = tokenizer("1 + 1 * 2 + 3")
+    tokens = tokenizer("f(1,2)")
+    print(tokens)
     parsed = parse(tokens)
     print(parsed)
