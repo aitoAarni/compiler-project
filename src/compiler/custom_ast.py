@@ -38,7 +38,11 @@ class BinaryOp(Expression):
     right: Expression
 
 @dataclass
-class TernaryOp(Expression):
-    if_: Expression
+class ConditionalStatement(Expression):
+    """Class for conditional statements"""
+    cond: Expression
+
+@dataclass
+class TernaryOp(ConditionalStatement):
     then_: Expression
     else_: Expression | None
