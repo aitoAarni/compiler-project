@@ -68,17 +68,21 @@ class Parser:
         self,
         operators: list[str],
         next_func: Callable[[], ast.Expression],
+        left_associative: bool = True,
     ) -> ast.Expression:
-        first_operand = next_func()
+        left_operand = next_func()
         while self.peek().text in operators:
             operator_token = self.consume(operators)
             operator = ast.Operator(operator_token.text)
-            second_operand = next_func()
-            first_operand = ast.BinaryOp(first_operand, operator, second_operand)
-        return first_operand
+            if left_associative:
+                right_operand = next_func()
+            else:
+                right_operand = self.parse_expression()
+            left_operand = ast.BinaryOp(left_operand, operator, right_operand)
+        return left_operand
 
     def parse_level_1(self) -> ast.Expression:
-        return self.parse_binary_operator(["="], self.parse_level_2)
+        return self.parse_binary_operator([ "=" ], self.parse_level_2, left_associative=False) 
 
     def parse_level_2(self) -> ast.Expression:
         return self.parse_binary_operator(["or"], self.parse_level_3)

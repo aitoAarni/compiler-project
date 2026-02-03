@@ -309,10 +309,10 @@ def test_assignment_operator():
     correct_answer = ast.BinaryOp(
         ast.Identifier("a"),
         ast.Operator("="),
-        ast.BinaryOp(ast.Literal(4), ast.Operator("%"), ast.Identifier("a")),
+        ast.BinaryOp(ast.Identifier("b"), ast.Operator("="), ast.Identifier("c")),
     )
     tokens = create_tokens(
-        ["a", t[1]], ["=", t[3]], [4, t[0]], ["%", t[3]], ["a", t[1]]
+        ["a", t[1]], ["=", t[3]], ["b", t[1]], ["=", t[3]], ["c", t[1]]
     )
     parsed = parse(tokens)
     assert parsed == correct_answer
