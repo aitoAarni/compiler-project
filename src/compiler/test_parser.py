@@ -327,18 +327,18 @@ def test_assignment_only_to_identifier():
         parse(tokens)
 
 
-# def test_while_do_statment():
-#     correct_answer = ast.WhileStatement(
-#         ast.Identifier("x"), ast.FunctionCall(ast.Identifier("print"), [])
-#     )
-#     tokens = create_tokens(
-#         ["while", t[1]],
-#         ["x", t[1]],
-#         ["do", t[1]],
-#         ["f", t[1]],
-#         ["(", t[2]],
-#         [")", t[2]],
-#     )
+def test_while_do_statment():
+    correct_answer = ast.WhileStatement(
+        ast.Identifier("x"), ast.FunctionCall(ast.Identifier("print"), args=None)
+    )
+    tokens = create_tokens(
+        ["while", t[1]],
+        ["x", t[1]],
+        ["do", t[1]],
+        ["print", t[1]],
+        ["(", t[2]],
+        [")", t[2]],
+    )
 
-#     parsed = parse(tokens)
-#     assert parsed == correct_answer
+    parsed = parse(tokens)
+    assert parsed == correct_answer
