@@ -268,7 +268,6 @@ def test_or_operator():
     assert parsed == correct_answer
 
 
-
 def test_not_operator():
     correct_answer = ast.UnaryOp(
         ast.Operator("not"), ast.UnaryOp(ast.Operator("not"), ast.Literal(1))
@@ -277,10 +276,43 @@ def test_not_operator():
     parsed = parse(tokens)
     assert parsed == correct_answer
 
+
 def test_unary_minus_operator():
     correct_answer = ast.UnaryOp(
         ast.Operator("-"), ast.UnaryOp(ast.Operator("-"), ast.Literal(1))
     )
     tokens = create_tokens(["-", t[3]], ["-", t[3]], [1, t[0]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer
+
+
+def test_ast_structure():
+    correct_answer = ast.BinaryOp(
+        ast.BinaryOp(ast.Identifier("a"), ast.Operator("-"), ast.Identifier("b")),
+        ast.Operator("+"),
+        ast.BinaryOp(ast.Identifier("c"), ast.Operator("*"), ast.Identifier("d")),
+    )
+    tokens = create_tokens(
+        ["a", t[1]],
+        ["-", t[3]],
+        ["b", t[1]],
+        ["+", t[3]],
+        ["c", t[1]],
+        ["*", t[3]],
+        ["d", t[1]],
+    )
+    parsed = parse(tokens)
+    assert parsed == correct_answer
+
+
+def test_assignment_operator():
+    correct_answer = ast.BinaryOp(
+        ast.Identifier("a"),
+        ast.Operator("="),
+        ast.BinaryOp(ast.Literal(4), ast.Operator("%"), ast.Identifier("a")),
+    )
+    tokens = create_tokens(
+        ["a", t[1]], ["=", t[3]], [4, t[0]], ["%", t[3]], ["a", t[1]]
+    )
     parsed = parse(tokens)
     assert parsed == correct_answer
