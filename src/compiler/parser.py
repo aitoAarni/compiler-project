@@ -170,10 +170,22 @@ class Parser:
 
     def parse_block(self) -> ast.Block:
         self.consume("{")
-        expression = self.parse_expression()
-        self.consume(";")
+        statements: list[ast.Expression] = []
+        result_expression = None
+        while self.peek().text != "}":
+            statement = self.parse_expression()
+            next_token = self.peek().text
+            if next_token == ";":
+                statements.append(statement)
+                self.consume(";")
+            elif next_token == "}":
+                result_expression = statement
+                break
+
         self.consume("}")
-        return ast.Block([expression])
+        return ast.Block(
+            statements, result_expression if result_expression else ast.Literal(None)
+        )
 
     def parse(self):
         if not bool(self.tokens):
@@ -181,7 +193,9 @@ class Parser:
         expression = self.parse_expression()
         if self.pos != self.token_length:
             loc = self.peek().location
-            raise Exception(f"Invalid syntax at ({loc.line}, {loc.column}), token: {self.peek().text}")
+            raise Exception(
+                f"Invalid syntax at ({loc.line}, {loc.column}), token: {self.peek().text}"
+            )
         return expression
 
 

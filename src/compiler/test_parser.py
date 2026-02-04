@@ -349,3 +349,44 @@ def test_parse_simple_block():
     tokens = create_tokens(["{", t[2]], ["a", t[1]], [";", t[2]], ["}", t[2]])
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+
+def test_parse_multiple_expressions_block():
+    correct_answer = ast.Block(
+        [
+            ast.Identifier("a"),
+            ast.BinaryOp(ast.Identifier("a"), ast.Operator("="), ast.Literal(2)),
+        ]
+    )
+    tokens = create_tokens(
+        ["{", t[2]],
+        ["a", t[1]],
+        [";", t[2]],
+        ["a", t[1]],
+        ["=", t[3]],
+        ["2", t[0]],
+        [";", t[2]],
+        ["}", t[2]],
+    )
+    parsed = parse(tokens)
+    assert parsed == correct_answer
+
+
+def test_parse_block_with_result_expression_block():
+    correct_answer = ast.Block(
+        [
+            ast.Identifier("a"),
+        ],
+        ast.BinaryOp(ast.Identifier("a"), ast.Operator("="), ast.Literal(2)),
+    )
+    tokens = create_tokens(
+        ["{", t[2]],
+        ["a", t[1]],
+        [";", t[2]],
+        ["a", t[1]],
+        ["=", t[3]],
+        ["2", t[0]],
+        ["}", t[2]],
+    )
+    parsed = parse(tokens)
+    assert parsed == correct_answer

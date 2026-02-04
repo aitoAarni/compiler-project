@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass
@@ -68,4 +68,4 @@ class WhileStatement(ConditionalStatement):
 @dataclass
 class Block(Expression):
     statements: list[Expression]
-    result_expression: Expression = lambda: Literal(None)
+    result_expression: Expression = field(default_factory=lambda:  Literal(None))
