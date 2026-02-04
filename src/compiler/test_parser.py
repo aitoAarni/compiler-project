@@ -342,3 +342,10 @@ def test_while_do_statment():
 
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+
+def test_parse_simple_block():
+    correct_answer = ast.Block([ast.Identifier("a")])
+    tokens = create_tokens(["{", t[2]], ["a", t[1]], [";", t[2]], ["}", t[2]])
+    parsed = parse(tokens)
+    assert parsed == correct_answer

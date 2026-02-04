@@ -127,6 +127,8 @@ class Parser:
     def parse_level_9(self) -> ast.Expression:
         if self.peek().text == "(":
             return self.parse_parenthesized()
+        elif self.peek().text == "{":
+            return self.parse_block()
         elif self.peek().type == "int_literal":
             return self.parse_int_literal()
         elif self.peek().type == "identifier":
@@ -166,13 +168,20 @@ class Parser:
         self.consume(")")
         return expr
 
+    def parse_block(self) -> ast.Block:
+        self.consume("{")
+        expression = self.parse_expression()
+        self.consume(";")
+        self.consume("}")
+        return ast.Block([expression])
+
     def parse(self):
         if not bool(self.tokens):
             return None
         expression = self.parse_expression()
         if self.pos != self.token_length:
             loc = self.peek().location
-            raise Exception(f"Invalid syntax at ({loc.line}, {loc.column})")
+            raise Exception(f"Invalid syntax at ({loc.line}, {loc.column}), token: {self.peek().text}")
         return expression
 
 

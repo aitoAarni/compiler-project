@@ -8,7 +8,7 @@ class Expression:
 
 @dataclass
 class Literal(Expression):
-    value: int | bool
+    value: int | bool | None
 
 
 @dataclass
@@ -59,6 +59,13 @@ class TernaryOp(ConditionalStatement):
     then_: Expression
     else_: Expression | None = None
 
+
 @dataclass
 class WhileStatement(ConditionalStatement):
     body: Expression
+
+
+@dataclass
+class Block(Expression):
+    statements: list[Expression]
+    result_expression: Expression = lambda: Literal(None)
