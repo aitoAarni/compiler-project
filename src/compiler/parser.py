@@ -2,6 +2,7 @@ from compiler.tokenizer import Token
 from compiler.tokenizer import tokenizer
 import compiler.custom_ast as ast
 from collections.abc import Callable
+from compiler.utils import get_keywords
 
 
 class Parser:
@@ -40,11 +41,8 @@ class Parser:
     def parse_identifier(self) -> ast.Identifier:
         if self.peek().type != "identifier":
             raise Exception(f"{self.peek().location}: expected a identifier (variable)")
-        elif self.peek().text == "if":
-            return self.parse_if_statement()
-        elif self.peek().text == "while":
-            return self.parse_while_statement()
-
+        elif self.peek().text in get_keywords():
+            return self.parse_keyword()
         token = self.consume()
         identifier = ast.Identifier(token.text)
         if self.peek().text == "(":
@@ -137,6 +135,12 @@ class Parser:
             raise Exception(
                 f'{self.peek().location}: expected "(", an integer literal or an identifier'
             )
+
+    def parse_keyword(self):
+        if self.peek().text == "if":
+            return self.parse_if_statement()
+        elif self.peek().text == "while":
+            return self.parse_while_statement()
 
     def parse_if_statement(self) -> ast.TernaryOp:
         self.consume("if")
