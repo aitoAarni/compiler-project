@@ -417,3 +417,17 @@ def test_block_works_with_assignment():
     )
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+def test_block_where_missin_semicolon():
+
+    tokens = create_tokens(
+        ["{", t[2]],
+        ["a", t[1]],
+        ["a", t[1]],
+        ["=", t[3]],
+        ["2", t[0]],
+        [";", t[2]],
+        ["}", t[2]],
+    )
+    with pytest.raises(Exception, match=r"SourceLocation\(line=0, column=0\): expected \";\""):
+        parse(tokens)

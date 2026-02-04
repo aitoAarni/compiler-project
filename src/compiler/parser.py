@@ -40,7 +40,9 @@ class Parser:
 
     def parse_identifier(self) -> ast.Identifier:
         if self.peek().type != "identifier":
-            raise Exception(f"{self.peek().location}: expected a identifier (variable)")
+            raise Exception(
+                f"{self.peek().location}: expected an identifier (variable)"
+            )
         elif self.peek().text in get_keywords():
             return self.parse_keyword()
         token = self.consume()
@@ -175,12 +177,12 @@ class Parser:
         while self.peek().text != "}":
             statement = self.parse_expression()
             next_token = self.peek().text
-            if next_token == ";":
-                statements.append(statement)
-                self.consume(";")
-            elif next_token == "}":
+            if next_token == "}":
                 result_expression = statement
                 break
+            else:
+                statements.append(statement)
+                self.consume(";")
 
         self.consume("}")
         return ast.Block(
