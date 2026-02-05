@@ -463,3 +463,21 @@ def test_keyword_as_var_throws():
     with pytest.raises(Exception, match="Variable must be of type identifier"):
         parse(tokens)
 
+
+def test_declare_var_inside_block():
+    correct_answer = ast.TernaryOp(
+        ast.Literal(1), ast.Block([], ast.Variable(ast.Identifier("x"), ast.Literal(1)))
+    )
+    tokens = create_tokens(
+        ["if", t[1]],
+        ["1", t[0]],
+        ["then", t[1]],
+        ["{", t[2]],
+        ["var", t[1]],
+        ["x", t[1]],
+        ["=", t[3]],
+        ["1", t[0]],
+        ["}", t[2]],
+    )
+    parsed = parse(tokens)
+    assert parsed == correct_answer
