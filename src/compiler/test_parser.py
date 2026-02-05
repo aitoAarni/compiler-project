@@ -3,6 +3,7 @@ from collections.abc import Sequence
 from compiler.tokenizer import Token, SourceLocation
 from compiler.parser import parse
 import compiler.custom_ast as ast
+from compiler.utils import get_keywords
 
 t = ["int_literal", "identifier", "punctuation", "operator"]
 
@@ -418,6 +419,7 @@ def test_block_works_with_assignment():
     parsed = parse(tokens)
     assert parsed == correct_answer
 
+
 def test_block_where_missin_semicolon():
 
     tokens = create_tokens(
@@ -429,16 +431,26 @@ def test_block_where_missin_semicolon():
         [";", t[2]],
         ["}", t[2]],
     )
-    with pytest.raises(Exception, match=r"SourceLocation\(line=0, column=0\): expected \";\""):
+    with pytest.raises(
+        Exception, match=r"SourceLocation\(line=0, column=0\): expected \";\""
+    ):
         parse(tokens)
+
 
 def test_parse_var():
     correct_answer = ast.Variable(ast.Identifier("x"), ast.Literal(1))
-    tokens = create_tokens(["var", t[1]], ["x", t[1]], ["=", t[3]], ["1", t[0]]) 
+    tokens = create_tokens(["var", t[1]], ["x", t[1]], ["=", t[3]], ["1", t[0]])
     parsed = parse(tokens)
     assert parsed == correct_answer
 
+
 def test_keyword_as_var_throws():
-    tokens = create_tokens(["var", t[1]], ["if", t[1]], ["=", t[3]], ["1", t[0]]) 
-    with pytest.raises(Exception, match=r"SourceLocation\(line=0, column=0\): expected \"\(\", an integer literal or an identifier"):
-        parse(tokens)
+    for keyword in get_keywords():
+        if keyword == "var":
+            continue
+        tokens = create_tokens(["var", t[1]], [keyword, t[1]], ["=", t[3]], ["1", t[0]])
+        with pytest.raises(
+            Exception,
+            match=r"SourceLocation\(line=0, column=0\): expected \"\(\", an integer literal or an identifier",
+        ):
+            parse(tokens)
