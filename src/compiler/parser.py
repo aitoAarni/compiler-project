@@ -38,7 +38,7 @@ class Parser:
         token = self.consume()
         return ast.Literal(int(token.text))
 
-    def parse_identifier(self) -> ast.Identifier:
+    def parse_identifier(self) -> ast.Identifier | ast.Expression:
         if self.peek().type != "identifier":
             raise Exception(
                 f"{self.peek().location}: expected an identifier (variable)"
@@ -171,6 +171,8 @@ class Parser:
     def parse_var_declaration(self) -> ast.Variable:
         self.consume("var")
         identifier = self.parse_identifier()
+        if type(identifier) != ast.Identifier:
+            raise Exception(f"Variable must be of type identifier")
         self.consume("=")
         initializer = self.parse_expression()
         return ast.Variable(identifier, initializer)

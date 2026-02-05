@@ -454,3 +454,12 @@ def test_keyword_as_var_throws():
             match=r"SourceLocation\(line=0, column=0\): expected \"\(\", an integer literal or an identifier",
         ):
             parse(tokens)
+
+
+def test_keyword_as_var_throws():
+    tokens = create_tokens(
+        ["var", t[1]], ["f", t[1]], ["(", t[2]], [")", t[2]], ["=", t[3]], ["1", t[0]]
+    )
+    with pytest.raises(Exception, match="Variable must be of type identifier"):
+        parse(tokens)
+
