@@ -145,6 +145,10 @@ class Parser:
             return self.parse_if_statement()
         elif self.peek().text == "while":
             return self.parse_while_statement()
+        elif self.peek().text == "var":
+            return self.parse_var_declaration()
+        else:
+            raise Exception(f"Keyowrd {self.peek().text} is not handled in parser")
 
     def parse_if_statement(self) -> ast.TernaryOp:
         self.consume("if")
@@ -163,6 +167,13 @@ class Parser:
         self.consume("do")
         body = self.parse_expression()
         return ast.WhileStatement(cond, body)
+
+    def parse_var_declaration(self) -> ast.Variable:
+        self.consume("var")
+        identifier = self.parse_identifier()
+        self.consume("=")
+        initializer = self.parse_expression()
+        return ast.Variable(identifier, initializer)
 
     def parse_parenthesized(self) -> ast.Expression:
         self.consume("(")

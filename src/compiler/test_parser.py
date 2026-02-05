@@ -432,8 +432,8 @@ def test_block_where_missin_semicolon():
     with pytest.raises(Exception, match=r"SourceLocation\(line=0, column=0\): expected \";\""):
         parse(tokens)
 
-# def test_parse_var():
-#     correct_answer = ast.Variable("x", "1")
-#     tokens = create_tokens(["var", t[1]], ["x", t[1]], ["=", t[3]], ["1", t[0]]) 
-#     parsed = parse(tokens)
-#     assert parsed == correct_answer
+def test_parse_var():
+    correct_answer = ast.Variable(ast.Identifier("x"), ast.Literal(1))
+    tokens = create_tokens(["var", t[1]], ["x", t[1]], ["=", t[3]], ["1", t[0]]) 
+    parsed = parse(tokens)
+    assert parsed == correct_answer

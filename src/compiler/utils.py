@@ -1,2 +1,2 @@
 def get_keywords() -> list[str]:
-    return ["if", "while"]
+    return ["if", "while", "var"]
