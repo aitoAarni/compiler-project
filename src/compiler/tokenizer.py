@@ -110,7 +110,7 @@ def get_regex_for_token(regex: str) -> str:
     }
     return tokenizer_regexes[regex]
 
-def tokenizer(source_code: str):
+def tokenizer(source_code: str=""):
     tokens = []
     lines = source_code.split("\n")
     for i, line in enumerate(lines):
@@ -119,4 +119,4 @@ def tokenizer(source_code: str):
     return tokens
 
 if __name__ == "__main__":
-    print(tokenizer("boi\nman + 2\n\nx + b"))
+    print(tokenizer())

@@ -12,6 +12,7 @@ def create_tokens(token_type: str, *values) -> list[Token]:
     return lis
 
 def test_empty_input() -> None:
+    print(tokenizer())
     assert tokenizer() == []
 
 def test_ignore_white_space() -> None:
