@@ -437,3 +437,8 @@ def test_parse_var():
     tokens = create_tokens(["var", t[1]], ["x", t[1]], ["=", t[3]], ["1", t[0]]) 
     parsed = parse(tokens)
     assert parsed == correct_answer
+
+def test_keyword_as_var_throws():
+    tokens = create_tokens(["var", t[1]], ["if", t[1]], ["=", t[3]], ["1", t[0]]) 
+    with pytest.raises(Exception, match=r"SourceLocation\(line=0, column=0\): expected \"\(\", an integer literal or an identifier"):
+        parse(tokens)
