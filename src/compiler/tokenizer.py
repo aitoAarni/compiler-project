@@ -21,7 +21,7 @@ class Token:
     location: SourceLocation
 
 
-def tokenizer(source_code: str = "") -> list[Token]:
+def tokenize_line(source_code: str, line_number: int) -> list[Token]:
     identifier = get_regex_for_token("identifier")
     int_literal = get_regex_for_token("int_literal")
     white_space = get_regex_for_token("white_space")
@@ -47,7 +47,6 @@ def tokenizer(source_code: str = "") -> list[Token]:
     previous_match_end = 0
     tokens: list[str] = []
     reqiure_non_identifier_char_after = False
-    token_line = 1
     while previous_match_end < len(source_code):
         for regex in regular_expressions:
             match = regex.search(source_code, previous_match_end)
@@ -62,28 +61,26 @@ def tokenizer(source_code: str = "") -> list[Token]:
                     raise Exception(f"Invalid syntax. Could not tokenize {source_code}")
                 else:
                     reqiure_non_identifier_char_after = False
-                if regex in [white_space_re, comment_re]:
-                    token_line += match[0].count("\n")
 
-                elif regex == identifier_re:
+                if regex == identifier_re:
                     token = Token(
                         match[0],
                         "identifier",
-                        SourceLocation(token_line, match.start() + 1),
+                        SourceLocation(line_number, match.start() + 1),
                     )
                     tokens.append(token)
                 elif regex == operator_re:
                     token = Token(
                         match[0],
                         "operator",
-                        SourceLocation(token_line, match.start() + 1),
+                        SourceLocation(line_number, match.start() + 1),
                     )
                     tokens.append(token)
                 elif regex == punctuation_re:
                     token = Token(
                         match[0],
                         "punctuation",
-                        SourceLocation(token_line, match.start() + 1),
+                        SourceLocation(line_number, match.start() + 1),
                     )
                     tokens.append(token)
 
@@ -92,7 +89,7 @@ def tokenizer(source_code: str = "") -> list[Token]:
                     token = Token(
                         match[0],
                         "int_literal",
-                        SourceLocation(token_line, match.start() + 1),
+                        SourceLocation(line_number, match.start() + 1),
                     )
                     tokens.append(token)
                 break
@@ -113,6 +110,13 @@ def get_regex_for_token(regex: str) -> str:
     }
     return tokenizer_regexes[regex]
 
+def tokenizer(source_code: str):
+    tokens = []
+    lines = source_code.split("\n")
+    for i, line in enumerate(lines):
+        line_tokens = tokenize_line(line, i + 1)
+        tokens.extend(line_tokens)
+    return tokens
 
 if __name__ == "__main__":
-    print(tokenizer("+"))
+    print(tokenizer("boi\nman + 2\n\nx + b"))
