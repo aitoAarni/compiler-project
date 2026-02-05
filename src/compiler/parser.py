@@ -214,6 +214,21 @@ def check_is_identifier(expression: ast.Expression, Error_msg=None) -> None:
 
 
 if __name__ == "__main__":
-    tokens = tokenizer("f()")
+    tokens = tokenizer(
+        """{
+        while f() do {
+                    x = 10;
+                    y = if g(x) then {
+                        x = x + 1;
+                        x
+                    } else {
+                        g(x)
+                    };
+                    g(y);
+                };
+                123
+                }
+                """
+    )
     parsed = parse(tokens)
     print(parsed)
